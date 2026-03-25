@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #f1f7f9;
+  --color-surface-dim: #ccd6d9;
+  --color-surface-bright: #f1f7f9;
+  --color-surface-container: #e2e9ec;
+  --color-surface-container-low: #ebf2f4;
+  --color-surface-container-high: #dbe4e7;
+  --color-surface-container-highest: #d5dee1;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #d5dee1;
+
+  --color-primary: #006479;
+  --color-primary-dim: #00576a;
+  --color-primary-fixed: #40cef3;
+  --color-primary-fixed-dim: #28c0e4;
+  --color-primary-container: #40cef3;
+  --color-on-primary: #e0f6ff;
+  --color-on-primary-container: #00414f;
+  --color-on-primary-fixed: #002a34;
+  --color-on-primary-fixed-variant: #004a5a;
+  --color-inverse-primary: #40cef3;
+
+  --color-secondary: #904800;
+  --color-secondary-dim: #7e3e00;
+  --color-secondary-fixed: #ffc6a0;
+  --color-secondary-fixed-dim: #ffb37d;
+  --color-secondary-container: #ffc6a0;
+  --color-on-secondary: #fff0e8;
+  --color-on-secondary-container: #723700;
+
+  --color-tertiary: #6c5a00;
+  --color-tertiary-dim: #5e4f00;
+  --color-tertiary-fixed: #f9dc64;
+  --color-tertiary-fixed-dim: #eace58;
+  --color-tertiary-container: #f9dc64;
+  --color-on-tertiary: #fff2cc;
+  --color-on-tertiary-container: #5d4d00;
+  --color-on-tertiary-fixed: #473b00;
+
+  --color-error: #b31b25;
+  --color-error-dim: #9f0519;
+  --color-error-container: #fb5151;
+  --color-on-error: #ffefee;
+  --color-on-error-container: #570008;
+
+  --color-on-surface: #293031;
+  --color-on-surface-variant: #565d5e;
+  --color-on-background: #293031;
+  --color-outline: #71787a;
+  --color-outline-variant: #a8aeb0;
+  --color-inverse-surface: #090f11;
+  --color-surface-tint: #006479;
+  --color-background: #f1f7f9;
+
+  --color-vibrant-orange: #F77F00;
+  --color-deep-navy: #03045E;
+  --color-correct: #38B000;
+  --color-correct-bg: #e8f5e9;
+  --color-correct-dark: #2d8c00;
+  --color-wrong-bg: #ffebee;
+
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Be Vietnam Pro", sans-serif;
+  --font-label: "Plus Jakarta Sans", sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-headline);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Custom utilities as plain CSS */
+.chunky-shadow-primary { box-shadow: 0 6px 0 0 #004a5a; }
+.chunky-shadow-surface { box-shadow: 0 6px 0 0 #d5dee1; }
+.chunky-shadow-correct { box-shadow: 0 6px 0 0 #2d8c00; }
+.chunky-shadow-wrong { box-shadow: 0 6px 0 0 #9f0519; }
+.orange-chunky-shadow { box-shadow: 0 6px 0 0 #b35c00; }
+.navy-chunky-border { border: 4px solid #03045E; }
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.confetti-pattern {
+  background-image: radial-gradient(#40cef3 1px, transparent 1px), radial-gradient(#f9dc64 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.95); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-fade-in { animation: fade-in 0.3s ease-out; }
+.animate-bounce-in { animation: bounce-in 0.6s ease-out; }
+
+.spinner {
+  border: 4px solid #dbe4e7;
+  border-top: 4px solid #006479;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
