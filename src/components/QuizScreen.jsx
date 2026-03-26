@@ -45,13 +45,17 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
 
   const handleSelect = (idx) => {
     if (answered) return
-    setAnswered(true)
     setSelectedIdx(idx)
-    const correct = idx === q.correct_index
+  }
+
+  const handleConfirm = () => {
+    if (answered || selectedIdx === null) return
+    setAnswered(true)
+    const correct = selectedIdx === q.correct_index
 
     answersLog.current.push({
       question_id: q.id,
-      selected_index: idx,
+      selected_index: selectedIdx,
       is_correct: correct,
     })
 
@@ -135,6 +139,14 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
 
   const getOptionClasses = (idx) => {
     if (!answered) {
+      // Opção selecionada (ainda não confirmada)
+      if (idx === selectedIdx) {
+        return {
+          card: 'bg-primary/10 border-2 border-primary shadow-[0_6px_0_0_#004a5a]',
+          number: 'bg-primary text-white',
+          text: 'text-primary',
+        }
+      }
       return {
         card: 'bg-surface-container-lowest border-2 border-surface-container-highest chunky-shadow-surface hover:bg-surface-container-low',
         number: 'bg-surface-container-high text-on-surface-variant',
@@ -226,6 +238,17 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
             )
           })}
         </div>
+
+        {/* Botão Confirmar - aparece quando selecionou mas não confirmou */}
+        {selectedIdx !== null && !answered && (
+          <button
+            onClick={handleConfirm}
+            className="w-full mt-6 bg-vibrant-orange text-white font-headline font-black text-lg py-5 rounded-xl orange-chunky-shadow active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+          >
+            CONFIRMAR RESPOSTA
+            <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+          </button>
+        )}
       </main>
 
       {/* Feedback Bar */}

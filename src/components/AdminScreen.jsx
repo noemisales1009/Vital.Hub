@@ -285,7 +285,7 @@ function VideosTab() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
-  const [form, setForm] = useState({ title: '', youtube_url: '', description: '' })
+  const [form, setForm] = useState({ title: '', youtube_url: '', description: '', topics: '' })
 
   useEffect(() => { loadVideos() }, [])
 
@@ -297,7 +297,7 @@ function VideosTab() {
   }
 
   const resetForm = () => {
-    setForm({ title: '', youtube_url: '', description: '' })
+    setForm({ title: '', youtube_url: '', description: '', topics: '' })
     setEditingId(null)
     setShowForm(false)
   }
@@ -346,6 +346,7 @@ function VideosTab() {
           <FormField label="Título" value={form.title} onChange={v => setForm(f => ({ ...f, title: v }))} placeholder="Ex: Segurança do Paciente" />
           <FormField label="URL do YouTube" value={form.youtube_url} onChange={v => setForm(f => ({ ...f, youtube_url: v }))} placeholder="https://youtube.com/watch?v=..." />
           <FormField label="Descrição" value={form.description} onChange={v => setForm(f => ({ ...f, description: v }))} textarea placeholder="Descrição do conteúdo..." />
+          <FormField label="Temas abordados" value={form.topics} onChange={v => setForm(f => ({ ...f, topics: v }))} placeholder="Ex: Introdução, IRAS, Precauções, Paramentação (separados por vírgula)" />
 
           {form.youtube_url && (
             <div className="aspect-video w-full rounded-xl overflow-hidden bg-black">
@@ -376,7 +377,7 @@ function VideosTab() {
                 {v.description && <p className="text-on-surface-variant text-xs mt-1 line-clamp-2">{v.description}</p>}
                 <div className="flex gap-2 mt-3">
                   <button
-                    onClick={() => { setForm({ title: v.title, youtube_url: v.youtube_url, description: v.description || '' }); setEditingId(v.id); setShowForm(true) }}
+                    onClick={() => { setForm({ title: v.title, youtube_url: v.youtube_url, description: v.description || '', topics: v.topics || '' }); setEditingId(v.id); setShowForm(true) }}
                     className="flex-1 py-2 rounded-lg text-xs font-bold bg-primary/10 text-primary flex items-center justify-center gap-1"
                   >
                     <span className="material-symbols-outlined text-sm">edit</span> Editar

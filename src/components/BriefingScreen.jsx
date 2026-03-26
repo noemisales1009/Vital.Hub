@@ -10,7 +10,10 @@ const ATTEMPT_LABELS = ['', '1ª Tentativa', '2ª Tentativa', '3ª e Última Ten
 export default function BriefingScreen({ video, attempt = 1, onStart, onBack, onNavigate }) {
   if (!video) return null
   const totalQuestions = video.questions.length
-  const categories = [...new Set(video.questions.map(q => q.category).filter(Boolean))]
+  // Usa temas do vídeo (campo topics) ou fallback das categorias das perguntas
+  const categories = video.topics
+    ? video.topics.split(',').map(t => t.trim()).filter(Boolean)
+    : [...new Set(video.questions.map(q => q.category).filter(Boolean))]
 
   return (
     <div className="animate-fade-in flex flex-col min-h-screen pb-24 lg:pb-8 lg:pl-20">
