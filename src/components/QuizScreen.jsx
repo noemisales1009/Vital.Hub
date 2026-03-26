@@ -86,54 +86,50 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
 
   const finishQuiz = async () => {
     const elapsed = Math.floor((Date.now() - startTime.current) / 1000)
-    const totalAnswered = answersLog.current.length
-    const finalScore = answersLog.current.filter(a => a.is_correct).length
-    const accuracy = totalAnswered > 0 ? Math.round((finalScore / totalAnswered) * 100) : 0
-    const xpEarned = finalScore * 50
 
-    // Save to Supabase
+    // Envia só as respostas — o Supabase calcula e salva tudo
+    const answersPayload = answersLog.current.map(a => ({
+      question_id: a.question_id,
+      selected_index: a.selected_index,
+    }))
+
+    let resultData = null
+
     try {
-      const { data: mission } = await supabase
-        .from('mission_results')
-        .insert({
-          player_id: player.playerId,
-          video_id: videoId,
-          attempt,
-          score: finalScore,
-          total_questions: quizQuestions.length,
-          accuracy,
-          time_seconds: elapsed,
-          xp_earned: xpEarned,
-        })
-        .select()
-        .single()
+      const { data, error } = await supabase.rpc('process_quiz_result', {
+        p_player_id: player.playerId,
+        p_video_id: videoId,
+        p_attempt: attempt,
+        p_time_seconds: elapsed,
+        p_answers: answersPayload,
+      })
 
-      if (mission && answersLog.current.length > 0) {
-        await supabase.from('answers').insert(
-          answersLog.current.map(a => ({ ...a, mission_result_id: mission.id }))
-        )
-      }
+      if (error) throw error
+      if (data?.error) throw new Error(data.error)
 
-      await supabase
-        .from('players')
-        .update({
-          total_xp: player.totalXP + xpEarned,
-          missions_completed: player.missionsCompleted + 1,
-          best_accuracy: Math.max(player.bestAccuracy, accuracy),
-          streak,
-        })
-        .eq('id', player.playerId)
+      resultData = data
     } catch (err) {
-      console.error('Error saving results:', err)
+      console.error('Erro ao salvar resultado:', err)
+      // Fallback local se a função falhar
+      const totalAnswered = answersLog.current.length
+      const finalScore = answersLog.current.filter(a => a.is_correct).length
+      const accuracy = totalAnswered > 0 ? Math.round((finalScore / totalAnswered) * 100) : 0
+      resultData = {
+        score: finalScore,
+        total: totalAnswered,
+        accuracy,
+        xp_earned: finalScore * 50,
+        streak: 0,
+      }
     }
 
     onFinish({
-      score: finalScore,
-      total: quizQuestions.length,
-      accuracy,
+      score: resultData.score,
+      total: resultData.total || quizQuestions.length,
+      accuracy: resultData.accuracy,
       timeSeconds: elapsed,
-      xpEarned,
-      streak,
+      xpEarned: resultData.xp_earned,
+      streak: resultData.streak || 0,
     })
   }
 
