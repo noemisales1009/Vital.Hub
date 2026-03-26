@@ -46,7 +46,7 @@ export default function MissionsScreen({ player, onNavigate, onSelectVideo }) {
   }
 
   return (
-    <div className="animate-fade-in flex flex-col min-h-screen pb-24 lg:pb-8 lg:pl-20">
+    <div className="animate-fade-in flex flex-col min-h-screen pb-20 lg:pb-8 lg:pl-20">
       {/* Header */}
       <header className="w-full sticky top-0 z-40 px-5 py-4 bg-surface/90 backdrop-blur-md shadow-[0_4px_0_0_rgba(213,222,225,1)]">
         <h1 className="font-headline font-extrabold text-2xl text-on-surface tracking-tight">Missões</h1>

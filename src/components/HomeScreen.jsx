@@ -96,7 +96,7 @@ export default function HomeScreen({ player, onNavigate, onSelectVideo }) {
   }
 
   return (
-    <div className="animate-fade-in flex flex-col min-h-screen pb-24 lg:pb-8 lg:pl-20">
+    <div className="animate-fade-in flex flex-col min-h-screen pb-20 lg:pb-8 lg:pl-20">
       {/* Header */}
       <header className="w-full sticky top-0 z-40 px-5 py-4 bg-surface/90 backdrop-blur-md flex justify-between items-center">
         <div>
@@ -115,7 +115,7 @@ export default function HomeScreen({ player, onNavigate, onSelectVideo }) {
         </button>
       </header>
 
-      <main className="max-w-md mx-auto w-full px-5 pt-2 space-y-5 flex-grow">
+      <main className="max-w-lg mx-auto w-full px-4 pt-2 space-y-4 flex-grow">
         {/* XP + Level Card */}
         <section className="bg-gradient-to-br from-primary to-primary-dim rounded-2xl p-5 text-on-primary relative overflow-hidden shadow-[0_6px_0_0_#003d4d]">
           <div className="absolute -right-6 -top-6 opacity-10">
@@ -125,7 +125,7 @@ export default function HomeScreen({ player, onNavigate, onSelectVideo }) {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <p className="text-on-primary/70 font-label font-bold text-[10px] uppercase tracking-widest">Nível {level}</p>
-                <p className="font-headline font-black text-4xl">{player.totalXP} <span className="text-lg font-bold text-on-primary/70">XP</span></p>
+                <p className="font-headline font-black text-3xl">{player.totalXP} <span className="text-base font-bold text-on-primary/70">XP</span></p>
               </div>
               <div className="flex items-center gap-1 bg-white/15 px-3 py-1.5 rounded-full">
                 <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>

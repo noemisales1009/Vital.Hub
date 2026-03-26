@@ -34,8 +34,8 @@ export default function VictoryScreen({ result, player, attempt, canRetry, onHom
           {/* Star Badge */}
           <div className="relative animate-bounce-in">
             <div className="absolute inset-0 bg-tertiary-fixed blur-[60px] opacity-30 rounded-full" />
-            <div className="relative w-48 h-48 bg-gradient-to-b from-tertiary-fixed to-tertiary-fixed-dim rounded-full flex items-center justify-center shadow-[0_12px_0_0_#eace58] -rotate-3 border-4 border-white/20">
-              <span className="material-symbols-outlined text-[100px] text-on-tertiary-fixed" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+            <div className="relative w-32 h-32 sm:w-48 sm:h-48 bg-gradient-to-b from-tertiary-fixed to-tertiary-fixed-dim rounded-full flex items-center justify-center shadow-[0_12px_0_0_#eace58] -rotate-3 border-4 border-white/20">
+              <span className="material-symbols-outlined text-[64px] sm:text-[100px] text-on-tertiary-fixed" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
               <div className="absolute -top-4 -right-2 bg-primary-container text-on-primary-container font-headline font-black px-4 py-2 rounded-xl rotate-12 shadow-lg text-lg">
                 +{result.xpEarned} XP
               </div>
@@ -94,7 +94,7 @@ export default function VictoryScreen({ result, player, attempt, canRetry, onHom
           <div className="w-full pt-8 space-y-6">
             <button
               onClick={onHome}
-              className="w-full bg-[#00B4D8] text-white font-headline font-extrabold text-xl py-6 rounded-xl chunky-shadow-primary active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+              className="w-full bg-[#00B4D8] text-white font-headline font-extrabold text-lg py-4 sm:py-6 rounded-xl chunky-shadow-primary active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
             >
               VOLTAR À BASE
               <span className="material-symbols-outlined">home</span>
@@ -102,7 +102,7 @@ export default function VictoryScreen({ result, player, attempt, canRetry, onHom
             {canRetry && !passed && (
               <button
                 onClick={onRetry}
-                className="w-full bg-vibrant-orange text-white font-headline font-extrabold text-xl py-6 rounded-xl orange-chunky-shadow active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+                className="w-full bg-vibrant-orange text-white font-headline font-extrabold text-lg py-4 sm:py-6 rounded-xl orange-chunky-shadow active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
               >
                 TENTAR NOVAMENTE ({attempt}/3)
                 <span className="material-symbols-outlined">refresh</span>

@@ -96,7 +96,7 @@ export default function ProfileScreen({ player, onNavigate, onLogout }) {
   }
 
   return (
-    <div className="animate-fade-in flex flex-col min-h-screen pb-24 lg:pb-8 lg:pl-20">
+    <div className="animate-fade-in flex flex-col min-h-screen pb-20 lg:pb-8 lg:pl-20">
       {/* Header */}
       <header className="w-full sticky top-0 z-40 px-4 py-3 bg-surface/90 shadow-[0_4px_0_0_rgba(213,222,225,1)] backdrop-blur-md flex justify-between items-center">
         <div className="flex items-center gap-3">
@@ -116,7 +116,7 @@ export default function ProfileScreen({ player, onNavigate, onLogout }) {
         )}
       </header>
 
-      <main className="max-w-md mx-auto w-full px-5 pt-6 space-y-6 flex-grow">
+      <main className="max-w-lg mx-auto w-full px-4 pt-4 space-y-5 flex-grow">
         {/* Avatar + Level Card */}
         <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-[0_6px_0_0_#d5dee1] relative overflow-hidden">
           <div className="absolute -right-6 -top-6 opacity-5">

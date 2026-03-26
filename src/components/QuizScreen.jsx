@@ -193,14 +193,14 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
         </div>
       </header>
 
-      <main className="flex-grow flex flex-col items-center px-6 pt-10 pb-24 w-full max-w-2xl mx-auto">
+      <main className="flex-grow flex flex-col items-center px-4 sm:px-6 pt-6 pb-20 w-full max-w-lg mx-auto">
         {/* Question */}
-        <div className="w-full mb-10">
-          <div className="relative bg-surface-container-lowest rounded-2xl p-8 shadow-[0_8px_0_0_#d5dee1] border-2 border-surface-container-highest">
-            <span className="absolute -top-4 -left-2 bg-tertiary-container text-on-tertiary-container font-headline font-black px-4 py-1 rounded-full text-sm uppercase tracking-widest">
+        <div className="w-full mb-6">
+          <div className="relative bg-surface-container-lowest rounded-2xl p-5 sm:p-8 shadow-[0_8px_0_0_#d5dee1] border-2 border-surface-container-highest">
+            <span className="absolute -top-3 -left-1 bg-tertiary-container text-on-tertiary-container font-headline font-black px-3 py-0.5 rounded-full text-xs uppercase tracking-widest">
               Desafio Vital
             </span>
-            <h2 className="font-headline text-xl md:text-2xl font-extrabold text-on-surface leading-tight mt-2">
+            <h2 className="font-headline text-lg sm:text-xl font-extrabold text-on-surface leading-tight mt-1">
               {q.question}
             </h2>
             <div className="absolute -bottom-6 -right-4 w-20 h-20 opacity-10">
@@ -210,7 +210,7 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
         </div>
 
         {/* Options */}
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-3">
           {options.map((opt, i) => {
             const cls = getOptionClasses(i)
             return (
@@ -220,15 +220,15 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
                 disabled={answered}
                 className="w-full group active:translate-y-1 transition-transform disabled:pointer-events-none"
               >
-                <div className={`w-full rounded-xl p-5 flex items-center gap-4 transition-colors ${cls.card}`}>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-headline font-bold ${cls.number}`}>
+                <div className={`w-full rounded-xl p-4 flex items-center gap-3 transition-colors ${cls.card}`}>
+                  <div className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center font-headline font-bold text-sm ${cls.number}`}>
                     {cls.icon ? (
                       <span className="material-symbols-outlined">{cls.icon}</span>
                     ) : (
                       LABELS[i]
                     )}
                   </div>
-                  <span className={`font-headline font-bold text-base text-left leading-snug ${cls.text}`}>{opt}</span>
+                  <span className={`font-headline font-bold text-sm text-left leading-snug ${cls.text}`}>{opt}</span>
                 </div>
               </button>
             )
@@ -247,50 +247,53 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
         )}
       </main>
 
-      {/* Feedback Bar */}
-      <div className={`fixed bottom-0 left-0 w-full bg-white p-6 shadow-[0_-8px_40px_rgba(0,180,216,0.08)] rounded-t-2xl z-50 transition-transform duration-300 ${showFeedback ? 'translate-y-0' : 'translate-y-full'}`}>
-        <div className="max-w-2xl mx-auto space-y-3">
-          <div className="flex items-center gap-3">
-            {isCorrect ? (
-              <>
-                <div className="w-12 h-12 bg-correct-bg rounded-full flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-correct-dark font-bold">celebration</span>
-                </div>
-                <div>
-                  <p className="font-headline font-extrabold text-lg text-correct-dark">Excelente!</p>
-                  <p className="text-sm font-medium text-correct-dark">Você acertou!</p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="w-12 h-12 bg-wrong-bg rounded-full flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-error font-bold">heart_broken</span>
-                </div>
-                <div>
-                  <p className="font-headline font-extrabold text-lg text-error">Ops!</p>
-                  <p className="text-sm font-medium text-error">Resposta correta: {options[q.correct_index]}</p>
-                </div>
-              </>
-            )}
-          </div>
+      {/* Feedback Popup */}
+      {showFeedback && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className={`w-full max-w-xs sm:max-w-sm rounded-2xl p-5 space-y-3 shadow-2xl ${isCorrect ? 'bg-white border-4 border-correct' : 'bg-white border-4 border-error'}`}>
+            {/* Ícone */}
+            <div className="flex justify-center">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center ${isCorrect ? 'bg-correct-bg' : 'bg-wrong-bg'}`}>
+                <span className={`material-symbols-outlined text-4xl ${isCorrect ? 'text-correct-dark' : 'text-error'}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+                  {isCorrect ? 'check_circle' : 'cancel'}
+                </span>
+              </div>
+            </div>
 
-          {q.justification && (
-            <div className="bg-surface-container-low rounded-xl p-4">
-              <p className="text-sm text-on-surface-variant">
-                <span className="font-bold text-on-surface">Explicação: </span>
-                {q.justification}
+            {/* Título */}
+            <div className="text-center">
+              <p className={`font-headline font-extrabold text-xl ${isCorrect ? 'text-correct-dark' : 'text-error'}`}>
+                {isCorrect ? 'Excelente!' : 'Ops!'}
+              </p>
+              <p className={`text-xs font-medium mt-1 ${isCorrect ? 'text-correct-dark' : 'text-error'}`}>
+                {isCorrect ? 'Você acertou!' : `Resposta correta: ${options[q.correct_index]}`}
               </p>
             </div>
-          )}
 
-          <button
-            onClick={handleNext}
-            className="w-full px-12 py-4 bg-primary text-on-primary font-headline font-black text-xl uppercase tracking-widest rounded-xl chunky-shadow-primary active:translate-y-1 active:shadow-none transition-all"
-          >
-            Continuar
-          </button>
+            {/* Justificativa */}
+            {q.justification && (
+              <div className="bg-surface-container-low rounded-xl p-4">
+                <p className="text-sm text-on-surface-variant">
+                  <span className="font-bold text-on-surface">Explicação: </span>
+                  {q.justification}
+                </p>
+              </div>
+            )}
+
+            {/* Botão */}
+            <button
+              onClick={handleNext}
+              className={`w-full py-4 font-headline font-black text-lg uppercase tracking-widest rounded-xl active:translate-y-1 active:shadow-none transition-all text-white ${
+                isCorrect
+                  ? 'bg-correct shadow-[0_6px_0_0_#2d8c00]'
+                  : 'bg-primary chunky-shadow-primary'
+              }`}
+            >
+              Continuar
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

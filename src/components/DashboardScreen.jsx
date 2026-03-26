@@ -42,7 +42,7 @@ export default function DashboardScreen({ player, onNavigate }) {
   }, [player.playerId])
 
   return (
-    <div className="animate-fade-in flex flex-col min-h-screen pb-24 lg:pb-8 lg:pl-20">
+    <div className="animate-fade-in flex flex-col min-h-screen pb-20 lg:pb-8 lg:pl-20">
       {/* Header */}
       <header className="w-full sticky top-0 z-50 px-4 py-3 bg-surface/90 backdrop-blur-md shadow-[0_4px_0_0_rgba(213,222,225,1)] flex justify-between items-center">
         <div className="flex items-center gap-3">

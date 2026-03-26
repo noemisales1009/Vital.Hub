@@ -9,7 +9,7 @@ export default function BottomNav({ active = 'missions', onNavigate }) {
   return (
     <>
       {/* Mobile / Tablet — bottom bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white shadow-[0_-8px_40px_rgba(0,180,216,0.08)] rounded-t-[2rem] z-50">
+      <nav className="lg:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-4 pt-2 bg-white shadow-[0_-8px_40px_rgba(0,180,216,0.08)] rounded-t-[1.5rem] z-50">
         {items.map((item) => {
           const key = item.navId || item.id
           const isActive = active === key
