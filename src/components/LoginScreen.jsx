@@ -1,41 +1,72 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 
+const FUNCTIONS = [
+  'Administrador hospitalar',
+  'Agente de higienização',
+  'Analista de Qualidade',
+  'Assistente de Qualidade',
+  'Assistente social',
+  'Auxiliar de enfermagem',
+  'Biomédico / Analista clínico',
+  'Compras e suprimentos',
+  'Cozinheiro / Copeiro',
+  'Diretor hospitalar',
+  'Enfermeiro(a)',
+  'Faturista',
+  'Farmacêutico',
+  'Fisioterapeuta',
+  'Fonoaudiólogo',
+  'Gerente de enfermagem',
+  'Gerente/Coordenador de Qualidade',
+  'Lavanderia',
+  'Maqueiro',
+  'Médico',
+  'Nutricionista',
+  'Psicólogo',
+  'Recepcionista',
+  'Recursos humanos',
+  'Técnico de enfermagem',
+  'Técnico de laboratório',
+  'Técnico de manutenção',
+  'Técnico de Qualidade',
+  'Técnico em radiologia',
+  'TI hospitalar',
+]
+
 const SECTORS = [
-  'AMBULATÓRIO',
-  'CCIH',
-  'CCIRAS',
-  'CCIRAS + FISIOTERAPIA',
-  'CENTRO CIRURGICO',
-  'COCEP',
-  'COORD. CME',
-  'COORD. DA NUTRIÇÃO',
-  'COORD. DA RECEPÇÃO',
-  'COORD. FARMÁCIA',
-  'COORD. MULTIPROFISSIONAL',
-  'COORD. NIR',
-  'COORD. NUTRIÇÃO',
-  'COORD. SERVIÇO SOCIAL',
-  'COORDENAÇÃO DA FARMÁCIA',
-  'COORDENAÇÃO DO SESMT',
-  'COORDENAÇÃO MÉDICA DA UTIN E CCIRAS',
-  'COORDENADOR DO SETOR',
-  'COORDENADORA DA UTIN',
-  'COREMU',
-  'CRO',
-  'GERENCIA DE ENFERMAGEM',
-  'GERENCIA/UTIN',
-  'NEP',
+  'UTI PEDIÁTRICA',
+  'UTI NEONATAL',
+  'CENTRO CIRÚRGICO',
+  'SEMI INTENSIVA',
+  'UCINCA',
+  'UCINCO',
+  'CME',
+  'FARMÁCIA',
+  'NUTRIÇÃO',
+  'RECEPÇÃO',
+  'ADMISSÃO',
+  'SUPERVISÃO ADMINISTRATIVA',
+  'DIREÇÃO GERAL',
+  'DIREÇÃO CLÍNICA',
+  'GERÊNCIA DE ENFERMAGEM',
+  'CIPE',
+  'ROUPARIA',
+  'SCIRAS',
   'NHE',
-  'NIR',
-  'NIR/ DIREÇÃO CLINICA',
   'NSP',
   'QUALIDADE',
-  'RESIDENCIA',
-  'TIME DE ACESSO',
-  'UTI NEO',
-  'UTIN',
-  'UTIN /CCIH',
+  'NEP',
+  'CLÍNICA CIRÚRGICA',
+  'AGÊNCIA TRANSFUSIONAL',
+  'DAY CLINIC',
+  'COMISSÃO DE CURATIVO',
+  'NIR',
+  'HIGIENIZAÇÃO',
+  'LABORATÓRIO',
+  'COREMU',
+  'SERVIÇO SOCIAL',
+  'ALMOXARIFADO',
 ]
 
 export default function LoginScreen({ onLogin }) {
@@ -44,6 +75,7 @@ export default function LoginScreen({ onLogin }) {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [sector, setSector] = useState('')
+  const [funcao, setFuncao] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -122,7 +154,7 @@ export default function LoginScreen({ onLogin }) {
   }
 
   const handleRegister = async () => {
-    if (!name.trim() || !sector || !email.trim() || !password) {
+    if (!name.trim() || !sector || !funcao || !email.trim() || !password) {
       setError('Preencha todos os campos.')
       return
     }
@@ -157,6 +189,7 @@ export default function LoginScreen({ onLogin }) {
           user_id: authData.user.id,
           name: name.trim(),
           sector,
+          funcao,
           email: email.trim().toLowerCase(),
           password,
         })
@@ -257,6 +290,21 @@ export default function LoginScreen({ onLogin }) {
                   >
                     <option disabled value="">Selecione seu setor</option>
                     {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="font-label font-bold text-[10px] uppercase tracking-widest text-on-surface-variant ml-1">Função</label>
+                <div className="relative group">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors text-xl">work</span>
+                  <select
+                    value={funcao}
+                    onChange={e => setFuncao(e.target.value)}
+                    className="w-full bg-surface-container-low border-none rounded-2xl py-3.5 pl-12 pr-10 focus:ring-4 focus:ring-primary-fixed focus:bg-white transition-all font-medium text-on-surface appearance-none cursor-pointer outline-none text-sm"
+                  >
+                    <option disabled value="">Selecione sua função</option>
+                    {FUNCTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                   </select>
                   <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
                 </div>

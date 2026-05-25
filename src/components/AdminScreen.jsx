@@ -399,7 +399,7 @@ function VideosTab() {
 }
 
 /* ========== GERAR PDF ========== */
-function generatePDF(filteredPlayerIds, players, playerGroups, getPlayerVideoStatus, videosMap, stats) {
+function generatePDF(filteredPlayerIds, players, playerGroups, getPlayerVideoStatus, videosMap, stats, sectorStats, funcaoStats) {
   const doc = new jsPDF('portrait', 'mm', 'a4')
   const pageW = doc.internal.pageSize.getWidth()
   const pageH = doc.internal.pageSize.getHeight()
@@ -464,6 +464,7 @@ function generatePDF(filteredPlayerIds, players, playerGroups, getPlayerVideoSta
       summaryBody.push([
         p.name || '—',
         p.sector || '—',
+        p.funcao || '—',
         video?.title || '—',
         `${vs.attempts.length}/3`,
         `${vs.bestAccuracy}%`,
@@ -474,18 +475,18 @@ function generatePDF(filteredPlayerIds, players, playerGroups, getPlayerVideoSta
 
   autoTable(doc, {
     startY: y + 4,
-    head: [['Nome', 'Setor', 'Treinamento', 'Tentativas', 'Melhor Nota', 'Status']],
+    head: [['Nome', 'Setor', 'Função', 'Treinamento', 'Tentativas', 'Melhor Nota', 'Status']],
     body: summaryBody,
     theme: 'striped',
-    headStyles: { fillColor: [0, 100, 121], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-    bodyStyles: { fontSize: 8 },
+    headStyles: { fillColor: [0, 100, 121], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+    bodyStyles: { fontSize: 7.5 },
     columnStyles: {
-      3: { halign: 'center', cellWidth: 20 },
-      4: { halign: 'center', cellWidth: 22 },
-      5: { halign: 'center', cellWidth: 25 },
+      4: { halign: 'center', cellWidth: 18 },
+      5: { halign: 'center', cellWidth: 20 },
+      6: { halign: 'center', cellWidth: 23 },
     },
     margin: { left: margin, right: margin },
-    didParseCell: (data) => colorStatus(data, 5),
+    didParseCell: (data) => colorStatus(data, 6),
   })
 
   // ===== DETALHAMENTO =====
@@ -519,6 +520,7 @@ function generatePDF(filteredPlayerIds, players, playerGroups, getPlayerVideoSta
           detailBody.push([
             p.name || '—',
             p.sector || '—',
+            p.funcao || '—',
             p.email || '—',
             video?.title || '—',
             `${attemptNum}ª`,
@@ -534,26 +536,91 @@ function generatePDF(filteredPlayerIds, players, playerGroups, getPlayerVideoSta
 
   autoTable(doc, {
     startY: 24,
-    head: [['Nome', 'Setor', 'Email', 'Treinamento', 'Tent.', 'Acertos', 'Nota', 'Tempo', 'Status', 'Data/Hora']],
+    head: [['Nome', 'Setor', 'Função', 'Email', 'Treinamento', 'Tent.', 'Acertos', 'Nota', 'Tempo', 'Status', 'Data/Hora']],
     body: detailBody,
     theme: 'striped',
-    headStyles: { fillColor: [0, 100, 121], textColor: 255, fontStyle: 'bold', fontSize: 8 },
-    bodyStyles: { fontSize: 7.5 },
+    headStyles: { fillColor: [0, 100, 121], textColor: 255, fontStyle: 'bold', fontSize: 7 },
+    bodyStyles: { fontSize: 6.5 },
     columnStyles: {
-      4: { halign: 'center', cellWidth: 12 },
-      5: { halign: 'center', cellWidth: 16 },
-      6: { halign: 'center', cellWidth: 14 },
-      7: { halign: 'center', cellWidth: 14 },
-      8: { halign: 'center', cellWidth: 22 },
+      5: { halign: 'center', cellWidth: 11 },
+      6: { halign: 'center', cellWidth: 15 },
+      7: { halign: 'center', cellWidth: 13 },
+      8: { halign: 'center', cellWidth: 13 },
+      9: { halign: 'center', cellWidth: 22 },
     },
     margin: { left: 10, right: 10 },
     didParseCell: (data) => {
-      colorStatus(data, 8)
-      // Colorir nota
-      if (data.column.index === 6 && data.section === 'body') {
+      colorStatus(data, 9)
+      if (data.column.index === 7 && data.section === 'body') {
         const val = parseInt(data.cell.raw)
         if (val >= 80) { data.cell.styles.textColor = [45, 140, 0]; data.cell.styles.fontStyle = 'bold' }
         else if (val < 50) { data.cell.styles.textColor = [179, 27, 37] }
+      }
+    },
+  })
+
+  // ===== MÉDIA POR SETOR =====
+  doc.addPage('portrait')
+  doc.setFillColor(0, 100, 121)
+  doc.rect(0, 0, pageW, 18, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(12)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Desempenho por Setor', margin, 12)
+
+  autoTable(doc, {
+    startY: 24,
+    head: [['Setor', 'Participantes', 'Tentativas', 'Média (%)', 'Aprovados']],
+    body: sectorStats.map(s => [s.name, s.participants, s.attempts, `${s.avg}%`, s.approved]),
+    theme: 'striped',
+    headStyles: { fillColor: [0, 100, 121], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+    bodyStyles: { fontSize: 8 },
+    columnStyles: {
+      1: { halign: 'center', cellWidth: 28 },
+      2: { halign: 'center', cellWidth: 28 },
+      3: { halign: 'center', cellWidth: 25 },
+      4: { halign: 'center', cellWidth: 25 },
+    },
+    margin: { left: margin, right: margin },
+    didParseCell: (data) => {
+      if (data.column.index === 3 && data.section === 'body') {
+        const val = parseInt(data.cell.raw)
+        if (val >= 80) { data.cell.styles.textColor = [45, 140, 0]; data.cell.styles.fontStyle = 'bold' }
+        else if (val < 60) { data.cell.styles.textColor = [179, 27, 37] }
+        else { data.cell.styles.textColor = [247, 127, 0] }
+      }
+    },
+  })
+
+  // ===== MÉDIA POR FUNÇÃO =====
+  doc.addPage('portrait')
+  doc.setFillColor(0, 100, 121)
+  doc.rect(0, 0, pageW, 18, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(12)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Desempenho por Função', margin, 12)
+
+  autoTable(doc, {
+    startY: 24,
+    head: [['Função', 'Participantes', 'Tentativas', 'Média (%)', 'Aprovados']],
+    body: funcaoStats.map(f => [f.name, f.participants, f.attempts, `${f.avg}%`, f.approved]),
+    theme: 'striped',
+    headStyles: { fillColor: [0, 100, 121], textColor: 255, fontStyle: 'bold', fontSize: 8 },
+    bodyStyles: { fontSize: 8 },
+    columnStyles: {
+      1: { halign: 'center', cellWidth: 28 },
+      2: { halign: 'center', cellWidth: 28 },
+      3: { halign: 'center', cellWidth: 25 },
+      4: { halign: 'center', cellWidth: 25 },
+    },
+    margin: { left: margin, right: margin },
+    didParseCell: (data) => {
+      if (data.column.index === 3 && data.section === 'body') {
+        const val = parseInt(data.cell.raw)
+        if (val >= 80) { data.cell.styles.textColor = [45, 140, 0]; data.cell.styles.fontStyle = 'bold' }
+        else if (val < 60) { data.cell.styles.textColor = [179, 27, 37] }
+        else { data.cell.styles.textColor = [247, 127, 0] }
       }
     },
   })
@@ -582,6 +649,7 @@ function ReportsTab() {
   const [search, setSearch] = useState('')
   const [filterVideo, setFilterVideo] = useState('')
   const [filterStatus, setFilterStatus] = useState('') // 'approved', 'failed', 'pending'
+  const [filterFuncao, setFilterFuncao] = useState('')
   const [expandedPlayer, setExpandedPlayer] = useState(null)
 
   useEffect(() => { loadReports() }, [])
@@ -591,7 +659,7 @@ function ReportsTab() {
     try {
       const [resResults, resPlayers, resVideos] = await Promise.all([
         supabase.from('mission_results').select('*').order('created_at', { ascending: false }),
-        supabase.from('players').select('id, name, sector, email'),
+        supabase.from('players').select('id, name, sector, funcao, email'),
         supabase.from('videos').select('id, title'),
       ])
 
@@ -638,9 +706,10 @@ function ReportsTab() {
     const p = players[pid]
     if (!p) return false
     const q = search.toLowerCase()
-    const matchSearch = !q || p.name?.toLowerCase().includes(q) || p.sector?.toLowerCase().includes(q) || p.email?.toLowerCase().includes(q)
+    const matchSearch = !q || p.name?.toLowerCase().includes(q) || p.sector?.toLowerCase().includes(q) || p.funcao?.toLowerCase().includes(q) || p.email?.toLowerCase().includes(q)
+    const matchFuncao = !filterFuncao || p.funcao === filterFuncao
 
-    if (!matchSearch) return false
+    if (!matchSearch || !matchFuncao) return false
 
     if (filterVideo || filterStatus) {
       const videoStatus = getPlayerVideoStatus(playerGroups[pid])
@@ -673,6 +742,27 @@ function ReportsTab() {
   }).length
 
   const videosList = Object.values(videosMap)
+  const funcoesList = [...new Set(Object.values(players).map(p => p.funcao).filter(Boolean))].sort()
+
+  const buildGroupStats = (groupKey) => {
+    const map = {}
+    Object.keys(playerGroups).forEach(pid => {
+      const p = players[pid]
+      if (!p) return
+      const key = p[groupKey] || '—'
+      if (!map[key]) map[key] = { playerIds: new Set(), attempts: [] }
+      map[key].playerIds.add(pid)
+      map[key].attempts.push(...playerGroups[pid])
+    })
+    return Object.entries(map).map(([name, data]) => {
+      const avg = data.attempts.length > 0 ? Math.round(data.attempts.reduce((a, r) => a + r.accuracy, 0) / data.attempts.length) : 0
+      const approved = [...data.playerIds].filter(pid => Object.values(getPlayerVideoStatus(playerGroups[pid])).some(vs => vs.passed)).length
+      return { name, participants: data.playerIds.size, attempts: data.attempts.length, avg, approved }
+    }).sort((a, b) => b.avg - a.avg)
+  }
+
+  const sectorStats = buildGroupStats('sector')
+  const funcaoStats = buildGroupStats('funcao')
 
   return (
     <div className="space-y-5">
@@ -696,6 +786,12 @@ function ReportsTab() {
         </div>
       </div>
 
+      {/* Média por Setor */}
+      <GroupStatsTable title="Média por Setor" icon="apartment" data={sectorStats} />
+
+      {/* Média por Função */}
+      <GroupStatsTable title="Média por Função" icon="work" data={funcaoStats} />
+
       {/* Filtros */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
@@ -716,6 +812,14 @@ function ReportsTab() {
           {videosList.map(v => <option key={v.id} value={v.id}>{v.title}</option>)}
         </select>
         <select
+          value={filterFuncao}
+          onChange={e => setFilterFuncao(e.target.value)}
+          className="bg-surface-container-low border-none rounded-xl py-3 px-4 font-medium text-sm text-on-surface outline-none focus:ring-4 focus:ring-primary-fixed appearance-none cursor-pointer"
+        >
+          <option value="">Todas as funções</option>
+          {funcoesList.map(f => <option key={f} value={f}>{f}</option>)}
+        </select>
+        <select
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
           className="bg-surface-container-low border-none rounded-xl py-3 px-4 font-medium text-sm text-on-surface outline-none focus:ring-4 focus:ring-primary-fixed appearance-none cursor-pointer"
@@ -730,7 +834,7 @@ function ReportsTab() {
       <div className="flex justify-between items-center">
         <p className="text-on-surface-variant text-sm">{filteredPlayerIds.length} participantes encontrados</p>
         <button
-          onClick={() => generatePDF(filteredPlayerIds, players, playerGroups, getPlayerVideoStatus, videosMap, { totalPlayers, totalAttempts, approvedCount, avgAccuracy })}
+          onClick={() => generatePDF(filteredPlayerIds, players, playerGroups, getPlayerVideoStatus, videosMap, { totalPlayers, totalAttempts, approvedCount, avgAccuracy }, sectorStats, funcaoStats)}
           className="bg-error text-white font-headline font-bold text-sm px-5 py-3 rounded-xl shadow-[0_4px_0_0_#9f0519] active:translate-y-1 active:shadow-none transition-all flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-lg">picture_as_pdf</span>
@@ -762,7 +866,7 @@ function ReportsTab() {
                     </div>
                     <div className="min-w-0">
                       <p className="font-headline font-bold text-sm text-on-surface truncate">{p.name || 'Desconhecido'}</p>
-                      <p className="text-on-surface-variant text-xs truncate">{p.sector} &bull; {p.email}</p>
+                      <p className="text-on-surface-variant text-xs truncate">{p.sector}{p.funcao ? ` · ${p.funcao}` : ''} &bull; {p.email}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -859,6 +963,66 @@ function ReportsTab() {
           {filteredPlayerIds.length === 0 && (
             <p className="text-center text-on-surface-variant py-8 text-sm">Nenhum participante encontrado.</p>
           )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ========== TABELA DE MÉDIAS POR GRUPO ========== */
+function GroupStatsTable({ title, icon, data }) {
+  const [open, setOpen] = useState(false)
+  if (!data || data.length === 0) return null
+
+  return (
+    <div className="bg-surface-container-lowest rounded-2xl shadow-[0_3px_0_0_#d5dee1] overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full px-4 py-3 flex items-center justify-between hover:bg-surface-container-low/50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+          <span className="font-headline font-bold text-sm text-on-surface">{title}</span>
+          <span className="bg-primary/10 text-primary font-label font-black text-[10px] px-2 py-0.5 rounded-full">{data.length}</span>
+        </div>
+        <span className={`material-symbols-outlined text-outline transition-transform ${open ? 'rotate-180' : ''}`}>expand_more</span>
+      </button>
+
+      {open && (
+        <div className="px-4 pb-4 overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-surface-container-high">
+                <th className="text-left py-2 font-label font-black text-[10px] uppercase tracking-widest text-on-surface-variant">Nome</th>
+                <th className="text-center py-2 font-label font-black text-[10px] uppercase tracking-widest text-on-surface-variant w-16">Pessoas</th>
+                <th className="text-center py-2 font-label font-black text-[10px] uppercase tracking-widest text-on-surface-variant w-20">Tentativas</th>
+                <th className="text-center py-2 font-label font-black text-[10px] uppercase tracking-widest text-on-surface-variant w-16">Média</th>
+                <th className="text-center py-2 font-label font-black text-[10px] uppercase tracking-widest text-on-surface-variant w-20">Aprovados</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map(row => (
+                <tr key={row.name} className="border-b border-surface-container-high/50 last:border-0">
+                  <td className="py-2 font-medium text-on-surface">{row.name}</td>
+                  <td className="py-2 text-center text-on-surface-variant">{row.participants}</td>
+                  <td className="py-2 text-center text-on-surface-variant">{row.attempts}</td>
+                  <td className="py-2 text-center">
+                    <span className={`font-headline font-black px-2 py-0.5 rounded-lg text-xs ${
+                      row.avg >= 80 ? 'bg-correct-bg text-correct-dark' :
+                      row.avg >= 60 ? 'bg-vibrant-orange/10 text-vibrant-orange' :
+                      'bg-wrong-bg text-error'
+                    }`}>
+                      {row.avg}%
+                    </span>
+                  </td>
+                  <td className="py-2 text-center">
+                    <span className="font-headline font-bold text-correct-dark">{row.approved}</span>
+                    <span className="text-on-surface-variant">/{row.participants}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

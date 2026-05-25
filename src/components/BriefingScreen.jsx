@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import BottomNav from './BottomNav'
 
 function getEmbedUrl(url) {
@@ -5,11 +6,11 @@ function getEmbedUrl(url) {
   return match ? `https://www.youtube.com/embed/${match[1]}` : url
 }
 
-const ATTEMPT_LABELS = ['', '1ª Tentativa', '2ª Tentativa', '3ª e Última Tentativa']
-
 export default function BriefingScreen({ video, attempt = 1, onStart, onBack, onNavigate }) {
   if (!video) return null
   const totalQuestions = video.questions.length
+  // Na 1ª tentativa exige confirmação; nas demais o vídeo já foi assistido
+  const [watched, setWatched] = useState(attempt > 1)
   // Usa temas do vídeo (campo topics) ou fallback das categorias das perguntas
   const categories = video.topics
     ? video.topics.split(',').map(t => t.trim()).filter(Boolean)
@@ -33,15 +34,23 @@ export default function BriefingScreen({ video, attempt = 1, onStart, onBack, on
       <main className="max-w-lg mx-auto w-full px-4 pt-4 space-y-4 flex-grow">
         {/* YouTube Video */}
         <section>
-          <div className="aspect-video w-full rounded-2xl navy-chunky-border bg-black overflow-hidden shadow-2xl">
-            <iframe
-              className="w-full h-full"
-              src={getEmbedUrl(video.youtube_url)}
-              title={video.title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+          <div className="aspect-video w-full rounded-2xl navy-chunky-border overflow-hidden shadow-2xl">
+            {attempt === 1 ? (
+              <iframe
+                className="w-full h-full"
+                src={getEmbedUrl(video.youtube_url)}
+                title={video.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <div className="w-full h-full bg-surface-container flex flex-col items-center justify-center gap-3 px-6 text-center">
+                <span className="material-symbols-outlined text-5xl text-outline">lock</span>
+                <p className="font-headline font-bold text-on-surface text-base">Vídeo já assistido</p>
+                <p className="font-label text-on-surface-variant text-sm">O vídeo só pode ser assistido uma vez. Revise seus anotações e inicie o desafio!</p>
+              </div>
+            )}
           </div>
           <div className="mt-3 flex justify-between items-center">
             <h2 className="font-headline font-extrabold text-xl text-on-surface tracking-tight">{video.title}</h2>
@@ -52,6 +61,27 @@ export default function BriefingScreen({ video, attempt = 1, onStart, onBack, on
           </div>
           {video.description && (
             <p className="text-on-surface-variant text-sm mt-1">{video.description}</p>
+          )}
+
+          {/* Confirmação de assistência — só na 1ª tentativa */}
+          {attempt === 1 && (
+            <button
+              onClick={() => setWatched(true)}
+              disabled={watched}
+              className={`mt-3 w-full py-3 rounded-xl font-headline font-bold text-sm flex items-center justify-center gap-2 border-2 transition-all
+                ${watched
+                  ? 'bg-green-100 border-green-400 text-green-700 cursor-default'
+                  : 'bg-surface border-outline text-on-surface-variant active:scale-95'
+                }`}
+            >
+              <span
+                className="material-symbols-outlined text-xl"
+                style={watched ? { fontVariationSettings: "'FILL' 1" } : {}}
+              >
+                {watched ? 'check_circle' : 'play_circle'}
+              </span>
+              {watched ? 'Vídeo assistido! Pode começar.' : 'Confirmar que assisti ao vídeo'}
+            </button>
           )}
         </section>
 
@@ -95,24 +125,25 @@ export default function BriefingScreen({ video, attempt = 1, onStart, onBack, on
         </div>
 
         {/* Tentativa */}
-        <div className={`rounded-2xl p-4 flex items-center gap-3 ${attempt === 3 ? 'bg-error/10 border-2 border-error/30' : attempt === 2 ? 'bg-vibrant-orange/10 border-2 border-vibrant-orange/30' : 'bg-primary/10 border-2 border-primary/30'}`}>
-          <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${attempt === 3 ? 'bg-error/20' : attempt === 2 ? 'bg-vibrant-orange/20' : 'bg-primary/20'}`}>
-            <span className="font-headline font-black text-xl">{attempt}/3</span>
+        <div className="rounded-2xl p-4 flex items-center gap-3 bg-primary/10 border-2 border-primary/30">
+          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+            <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>flag</span>
           </div>
           <div>
-            <p className={`font-headline font-bold text-sm ${attempt === 3 ? 'text-error' : attempt === 2 ? 'text-vibrant-orange' : 'text-primary'}`}>
-              {ATTEMPT_LABELS[attempt]}
-            </p>
-            <p className="text-on-surface-variant text-xs">
-              {attempt === 3 ? 'Esta é sua última chance!' : attempt === 2 ? 'Você tem mais uma chance após esta.' : 'Você tem até 3 tentativas. Mínimo 80% para aprovação.'}
-            </p>
+            <p className="font-headline font-bold text-sm text-primary">Tentativa Única</p>
+            <p className="text-on-surface-variant text-xs">Você tem apenas 1 tentativa. Mínimo 80% para aprovação.</p>
           </div>
         </div>
 
         {/* CTA */}
         <button
           onClick={onStart}
-          className="w-full bg-vibrant-orange text-white font-headline font-black text-lg py-5 rounded-xl orange-chunky-shadow active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3"
+          disabled={!watched}
+          className={`w-full font-headline font-black text-lg py-5 rounded-xl transition-all flex items-center justify-center gap-3
+            ${watched
+              ? 'bg-vibrant-orange text-white orange-chunky-shadow active:translate-y-1 active:shadow-none'
+              : 'bg-outline/20 text-outline cursor-not-allowed'
+            }`}
         >
           COMEÇAR DESAFIO!
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>rocket_launch</span>

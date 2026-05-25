@@ -56,7 +56,7 @@ export default function App() {
     window.scrollTo(0, 0)
   }, [])
 
-  const canRetry = videoAttempts < 3 && (quizResult ? quizResult.accuracy < 80 : true)
+  const canRetry = false
 
   return (
     <div className="min-h-screen bg-surface">

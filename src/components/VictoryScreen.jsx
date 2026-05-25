@@ -21,8 +21,7 @@ export default function VictoryScreen({ result, player, attempt, canRetry, onHom
 
   const getMessage = () => {
     if (passed) return `Parabéns, ${player.playerName}! Você foi aprovado com ${result.accuracy}%!`
-    if (canRetry) return `${player.playerName}, você precisa de 80% para aprovação. Você usou ${attempt} de 3 tentativas. Revise o vídeo e tente novamente!`
-    return `${player.playerName}, suas 3 tentativas foram esgotadas. Entre em contato com o responsável.`
+    return `${player.playerName}, você precisa de 80% para aprovação. Sua tentativa foi utilizada. Entre em contato com o responsável.`
   }
 
   return (
@@ -117,7 +116,7 @@ export default function VictoryScreen({ result, player, attempt, canRetry, onHom
             <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
               {passed ? 'verified' : canRetry ? 'replay' : 'block'}
             </span>
-            {passed ? 'Aprovado - 80%+' : `Tentativa ${attempt} de 3 utilizada`}
+            {passed ? 'Aprovado - 80%+' : 'Tentativa utilizada'}
           </div>
           <p className="text-on-surface-variant text-sm leading-relaxed">{getMessage()}</p>
         </div>

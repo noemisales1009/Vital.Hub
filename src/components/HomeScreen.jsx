@@ -171,7 +171,7 @@ export default function HomeScreen({ player, onNavigate, onSelectVideo }) {
                 const style = CAT_COLORS[i % CAT_COLORS.length]
                 const qCount = video.questions.length
                 const att = attemptsMap[video.id] || { count: 0, bestAccuracy: 0, passed: false }
-                const blocked = att.count >= 3 || att.passed
+                const blocked = att.count >= 1 || att.passed
 
                 return (
                   <button
@@ -200,15 +200,10 @@ export default function HomeScreen({ player, onNavigate, onSelectVideo }) {
                           Aprovado
                         </div>
                       )}
-                      {!att.passed && att.count >= 3 && (
+                      {!att.passed && att.count >= 1 && (
                         <div className="absolute top-3 right-3 bg-error text-white font-label font-black text-[10px] px-3 py-1 rounded-full flex items-center gap-1">
                           <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>block</span>
                           Esgotado
-                        </div>
-                      )}
-                      {!blocked && att.count > 0 && (
-                        <div className="absolute top-3 right-3 bg-vibrant-orange text-white font-label font-black text-[10px] px-3 py-1 rounded-full">
-                          Tentativa {att.count}/3
                         </div>
                       )}
                     </div>
@@ -231,7 +226,7 @@ export default function HomeScreen({ player, onNavigate, onSelectVideo }) {
                         <span className="material-symbols-outlined text-outline-variant text-xl">lock</span>
                       ) : (
                         <div className="bg-primary text-on-primary font-label font-black text-[10px] uppercase px-3 py-1.5 rounded-full shadow-[0_2px_0_0_#004a5a]">
-                          {att.count === 0 ? 'Jogar' : 'Tentar'}
+                          Jogar
                         </div>
                       )}
                     </div>
@@ -283,6 +278,12 @@ export default function HomeScreen({ player, onNavigate, onSelectVideo }) {
       </main>
 
       <BottomNav active="home" onNavigate={onNavigate} />
+
+      <footer className="text-center py-4 pb-24 lg:pb-6">
+        <p className="text-on-surface-variant text-[11px] font-label">
+          Idealizado por Dra. Lélia Braga / <span className="text-primary font-bold">Criado por Noemi Sales</span>
+        </p>
+      </footer>
     </div>
   )
 }

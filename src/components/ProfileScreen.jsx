@@ -3,13 +3,13 @@ import { supabase } from '../lib/supabase'
 import BottomNav from './BottomNav'
 
 const SECTOR_OPTIONS = [
-  'AMBULATÓRIO', 'CCIH', 'CCIRAS', 'CCIRAS + FISIOTERAPIA', 'CENTRO CIRURGICO',
-  'COCEP', 'COORD. CME', 'COORD. DA NUTRIÇÃO', 'COORD. DA RECEPÇÃO', 'COORD. FARMÁCIA',
-  'COORD. MULTIPROFISSIONAL', 'COORD. NIR', 'COORD. NUTRIÇÃO', 'COORD. SERVIÇO SOCIAL',
-  'COORDENAÇÃO DA FARMÁCIA', 'COORDENAÇÃO DO SESMT', 'COORDENAÇÃO MÉDICA DA UTIN E CCIRAS',
-  'COORDENADOR DO SETOR', 'COORDENADORA DA UTIN', 'COREMU', 'CRO',
-  'GERENCIA DE ENFERMAGEM', 'GERENCIA/UTIN', 'NEP', 'NHE', 'NIR', 'NIR/ DIREÇÃO CLINICA',
-  'NSP', 'QUALIDADE', 'RESIDENCIA', 'TIME DE ACESSO', 'UTI NEO', 'UTIN', 'UTIN /CCIH',
+  'UTI PEDIÁTRICA', 'UTI NEONATAL', 'CENTRO CIRÚRGICO', 'SEMI INTENSIVA',
+  'UCINCA', 'UCINCO', 'CME', 'FARMÁCIA', 'NUTRIÇÃO', 'RECEPÇÃO', 'ADMISSÃO',
+  'SUPERVISÃO ADMINISTRATIVA', 'DIREÇÃO GERAL', 'DIREÇÃO CLÍNICA',
+  'GERÊNCIA DE ENFERMAGEM', 'CIPE', 'ROUPARIA', 'SCIRAS', 'NHE', 'NSP',
+  'QUALIDADE', 'NEP', 'CLÍNICA CIRÚRGICA', 'AGÊNCIA TRANSFUSIONAL',
+  'DAY CLINIC', 'COMISSÃO DE CURATIVO', 'NIR', 'HIGIENIZAÇÃO', 'LABORATÓRIO',
+  'COREMU', 'SERVIÇO SOCIAL', 'ALMOXARIFADO',
 ]
 
 function getLevelInfo(xp) {
@@ -36,6 +36,7 @@ export default function ProfileScreen({ player, onNavigate, onLogout }) {
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState(player.playerName)
   const [sector, setSector] = useState(player.playerSector)
+  const [funcao, setFuncao] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [fresh, setFresh] = useState({
@@ -45,6 +46,7 @@ export default function ProfileScreen({ player, onNavigate, onLogout }) {
     streak: player.streak,
     playerName: player.playerName,
     playerSector: player.playerSector,
+    playerFuncao: '',
   })
 
   // Buscar dados frescos do Supabase
@@ -65,9 +67,11 @@ export default function ProfileScreen({ player, onNavigate, onLogout }) {
           streak: p.streak || 0,
           playerName: p.name,
           playerSector: p.sector,
+          playerFuncao: p.funcao || '',
         })
         setName(p.name)
         setSector(p.sector)
+        setFuncao(p.funcao || '')
       }
     }
     load()
@@ -81,10 +85,10 @@ export default function ProfileScreen({ player, onNavigate, onLogout }) {
     try {
       await supabase
         .from('players')
-        .update({ name: name.trim(), sector })
+        .update({ name: name.trim(), sector, funcao: funcao.trim() })
         .eq('id', player.playerId)
 
-      setFresh(f => ({ ...f, playerName: name.trim(), playerSector: sector }))
+      setFresh(f => ({ ...f, playerName: name.trim(), playerSector: sector, playerFuncao: funcao.trim() }))
       setEditing(false)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
@@ -143,6 +147,12 @@ export default function ProfileScreen({ player, onNavigate, onLogout }) {
                 <span className="material-symbols-outlined text-sm text-on-surface-variant">medical_services</span>
                 <span className="text-on-surface-variant text-sm">{fresh.playerSector}</span>
               </div>
+              {fresh.playerFuncao && (
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="material-symbols-outlined text-sm text-on-surface-variant">work</span>
+                  <span className="text-on-surface-variant text-sm">{fresh.playerFuncao}</span>
+                </div>
+              )}
               {/* Level bar */}
               <div className="mt-3 space-y-1">
                 <div className="flex justify-between items-center">
@@ -239,9 +249,22 @@ export default function ProfileScreen({ player, onNavigate, onLogout }) {
               </div>
             </div>
 
+            <div className="space-y-1.5">
+              <label className="font-label font-bold text-[10px] uppercase tracking-widest text-on-surface-variant ml-1">Função</label>
+              <div className="relative group">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors text-xl">work</span>
+                <input
+                  value={funcao}
+                  onChange={e => setFuncao(e.target.value)}
+                  placeholder="Ex: Enfermeiro, Técnico, Médico..."
+                  className="w-full bg-surface-container-low border-none rounded-2xl py-3.5 pl-12 pr-4 focus:ring-4 focus:ring-primary-fixed focus:bg-white transition-all font-medium text-on-surface outline-none text-sm"
+                />
+              </div>
+            </div>
+
             <div className="flex gap-3 pt-2">
               <button
-                onClick={() => { setEditing(false); setName(fresh.playerName); setSector(fresh.playerSector) }}
+                onClick={() => { setEditing(false); setName(fresh.playerName); setSector(fresh.playerSector); setFuncao(fresh.playerFuncao) }}
                 className="flex-1 py-3 rounded-xl font-headline font-bold text-sm uppercase tracking-wider bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest transition-colors"
               >
                 Cancelar
