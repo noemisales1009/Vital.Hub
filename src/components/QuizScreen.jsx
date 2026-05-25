@@ -118,7 +118,7 @@ export default function QuizScreen({ questions, quizCount, player, videoId, atte
         score: finalScore,
         total: totalAnswered,
         accuracy,
-        xp_earned: finalScore * 50,
+        xp_earned: finalScore * 10,
         streak: 0,
       }
     }

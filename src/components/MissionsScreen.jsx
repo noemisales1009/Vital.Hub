@@ -65,7 +65,7 @@ export default function MissionsScreen({ player, onNavigate, onSelectVideo }) {
         ) : (
           videos.map((video, i) => {
             const qCount = video.questions.length
-            const xp = qCount * 50
+            const xp = qCount * 10
 
             return (
               <button

@@ -218,7 +218,7 @@ export default function HomeScreen({ player, onNavigate, onSelectVideo }) {
                           <p className="font-headline font-bold text-sm text-on-surface">{qCount} perguntas</p>
                           {att.count > 0
                             ? <p className="text-on-surface-variant text-xs">Melhor nota: <span className={att.bestAccuracy >= 80 ? 'text-correct-dark font-bold' : 'text-error font-bold'}>{att.bestAccuracy}%</span></p>
-                            : <p className="text-on-surface-variant text-xs">+{qCount * 50} XP possíveis</p>
+                            : <p className="text-on-surface-variant text-xs">+{qCount * 10} XP possíveis</p>
                           }
                         </div>
                       </div>

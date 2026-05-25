@@ -114,7 +114,7 @@ export default function BriefingScreen({ video, attempt = 1, onStart, onBack, on
           </div>
           <div className="bg-surface-container-low p-4 rounded-2xl flex flex-col items-center justify-center text-center">
             <span className="material-symbols-outlined text-secondary mb-1">military_tech</span>
-            <span className="font-headline font-extrabold text-lg text-on-surface">+{totalQuestions * 50}</span>
+            <span className="font-headline font-extrabold text-lg text-on-surface">+{totalQuestions * 10}</span>
             <span className="font-label text-[10px] uppercase text-outline">XP Máximo</span>
           </div>
           <div className="bg-surface-container-low p-4 rounded-2xl flex flex-col items-center justify-center text-center">
